@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>About - EMERGIAI</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/static/assets/styles.css" />
+</head>
+<body class="theme-blue">
+	<header class="bg-white shadow">
+		<nav class="container nav flex items-center justify-between">
+			<a class="text-xl font-bold" href="/static/index.html">EMERGIAI</a>
+			<div class="space-x-2">
+				<a href="/static/index.html">Home</a>
+				<a href="/static/chat.html">Chat</a>
+				<a href="/static/nearby.html">Hospitals</a>
+				<a href="/static/firstaid.html">First Aid</a>
+				<a class="active" href="/static/about.html">About</a>
+				<a href="/static/contact.html">Contact</a>
+			</div>
+		</nav>
+	</header>
+
+	<main class="container py-6 grid gap-4">
+		<section class="card">
+			<h1 class="text-2xl font-bold mb-2">What is EMERGIAI?</h1>
+			<p class="text-gray-700">EMERGIAI is an AI-powered emergency response assistant that provides immediate guidance, triage, and nearby help during medical, fire, and accident emergencies.</p>
+		</section>
+		<section class="card">
+			<h2 class="text-xl font-semibold mb-2">Problem It Solves</h2>
+			<p class="text-gray-700">In a crisis, people need quick, clear instructions and nearby resources. EMERGIAI assists with first-aid guidance, severity assessment, and directions to hospitals or essential services.</p>
+		</section>
+		<section class="card">
+			<h2 class="text-xl font-semibold mb-2">Technologies Used</h2>
+			<ul class="list-disc pl-6 text-gray-700">
+				<li>Backend: Python FastAPI</li>
+				<li>AI: Rule-based triage + optional OpenAI LLM</li>
+				<li>Frontend: HTML, Tailwind CSS, Vanilla JS</li>
+				<li>Maps: OpenStreetMap Overpass</li>
+			</ul>
+		</section>
+	</main>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>EMERGIAI — AI Powered Emergency Response Assistant</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/static/assets/styles.css" />
+</head>
+<body class="theme-blue">
+	<header class="bg-green-600 text-white shadow sticky top-0">
+		<nav class="container nav flex items-center justify-between">
+			<div class="header" style="flex:1 1 auto;">
+				<img src="/static/assets/logo.svg" alt="logo" />
+				<a class="brand" href="/static/index.html" style="color:#fff;font-weight:700;">EMERGIAI</a>
+				<div class="ticker-wrap"><div class="ticker" style="color:#fff;font-weight:700;">“EmergiAI’s mission is simple: to make sure no one faces an emergency alone, by combining AI, real-time location, and human care.”</div></div>
+			</div>
+			<div class="space-x-2">
+				<a class="active" href="/static/index.html" style="color:#000;font-weight:700;background-color:rgba(255,255,255,0.2);">Home</a>
+				<a href="/static/chat.html" style="color:#000;font-weight:700;">Chat</a>
+				<a href="/static/nearby.html" style="color:#000;font-weight:700;">Hospitals</a>
+				<a href="/static/firstaid.html" style="color:#000;font-weight:700;">First Aid</a>
+				<a href="/static/about.html" style="color:#000;font-weight:700;">About</a>
+				<a href="/static/contact.html" style="color:#000;font-weight:700;">Contact</a>
+			</div>
+		</nav>
+	</header>
+
+	<main class="container py-10">
+		<section class="text-center mb-8">
+			<h1 class="text-3xl font-bold mb-2">EMERGIAI — AI Powered Emergency Response Assistant</h1>
+			<p class="text-gray-600">Get instant help during medical, fire, or accident emergencies.</p>
+		</section>
+
+		<section class="pills mb-6" id="pillRow">
+			<a class="pill pill-green" href="/static/emergency.html?type=medical" aria-label="Medical emergency – tips and call 108">🚑 Medical</a>
+			<a class="pill pill-red" href="/static/emergency.html?type=fire" aria-label="Fire emergency – tips and call 101">🔥 Fire</a>
+			<a class="pill pill-blue" href="/static/emergency.html?type=police" aria-label="Police or accident – tips and call 100">🚔 Police / Accident</a>
+			<a class="pill pill-yellow" href="/static/emergency.html?type=sos" aria-label="General SOS – tips and call 112">🆘 SOS</a>
+		</section>
+
+		<section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<a class="card btn btn-primary text-center" href="/static/chat.html">Chat with EMERGIAI</a>
+			<a class="card btn text-center" style="background:#0ea5e9" href="/static/nearby.html">Find Nearby Hospitals</a>
+		</section>
+	</main>
+	<script>
+		(function gate(){
+			try { const u = JSON.parse(localStorage.getItem('emergiai_user')||'null'); if(!u){ window.location.replace('/static/login.html'); } } catch { window.location.replace('/static/login.html'); }
+		})();
+	</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Nearby Hospitals - EMERGIAI</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/static/assets/styles.css" />
+</head>
+<body class="theme-green">
+	<header class="bg-white shadow">
+		<nav class="container nav flex items-center justify-between">
+			<a class="text-xl font-bold" href="/static/index.html">EMERGIAI</a>
+			<div class="space-x-2">
+				<a href="/static/index.html">Home</a>
+				<a href="/static/chat.html">Chat</a>
+				<a class="active" href="/static/nearby.html">Hospitals</a>
+				<a href="/static/firstaid.html">First Aid</a>
+				<a href="/static/about.html">About</a>
+				<a href="/static/contact.html">Contact</a>
+			</div>
+		</nav>
+	</header>
+
+	<main class="container py-6">
+		<div class="card mb-4">
+			<div class="flex flex-wrap items-center gap-3">
+				<label>Radius (meters): <input id="radius" type="number" value="2000" class="border rounded px-2 py-1 w-24" /></label>
+				<button id="locate" class="btn btn-primary">Detect My Location</button>
+				<span id="status" class="text-gray-500"></span>
+			</div>
+			<div id="you" class="text-sm text-gray-600 mt-2"></div>
+		</div>
+		<div id="results" class="grid md:grid-cols-2 lg:grid-cols-3"></div>
+	</main>
+
+	<script>
+		const $ = (s) => document.querySelector(s);
+		let currentLat = null, currentLon = null;
+
+		async function reverseGeocode(lat, lon) {
+			try {
+				const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+				const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+				const json = await res.json();
+				return json.display_name || '';
+			} catch { return ''; }
+		}
+
+		function telLink(phone){
+			if (!phone) return '';
+			const digits = String(phone).replace(/[^+\d]/g,'');
+			return `<a class="btn" href="tel:${digits}">📞 ${phone}</a>`;
+		}
+
+		function card(item){
+			const a = item.address ? `\n<div class="text-gray-600">${item.address}</div>`:'';
+			const coords = `(${item.lat.toFixed ? item.lat.toFixed(5) : item.lat}, ${item.lon.toFixed ? item.lon.toFixed(5) : item.lon})`;
+			const p = item.phone ? `\n<div>${telLink(item.phone)}</div>`:'';
+			const w = item.website ? `\n<div>🔗 <a class="text-blue-600" target="_blank" href="${item.website}">Website</a></div>`:'';
+			const gmaps = `https://www.google.com/maps?q=${item.lat},${item.lon}`;
+			const osm = currentLat!=null && currentLon!=null
+				? `https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=${currentLat},${currentLon};${item.lat},${item.lon}`
+				: `https://www.openstreetmap.org/?mlat=${item.lat}&mlon=${item.lon}#map=16/${item.lat}/${item.lon}`;
+			const dirBtns = `\n<div class="mt-2 flex gap-2">\n<a class="btn" href="${gmaps}" target="_blank">Open in Google Maps</a>\n<a class="btn" href="${osm}" target="_blank">Directions (OSM)</a>\n</div>`;
+			return `<div class="card">\n<h3 class="text-lg font-semibold">${item.name}</h3>\n<div class="text-sm text-gray-500">${item.distance_km} km away · ${coords}</div>${a}${p}${w}${dirBtns}\n</div>`

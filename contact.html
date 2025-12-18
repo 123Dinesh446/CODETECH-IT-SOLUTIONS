@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Contact & SOS - EMERGIAI</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/static/assets/styles.css" />
+</head>
+<body class="bg-gray-50">
+	<header class="bg-white shadow">
+		<nav class="container nav flex items-center justify-between">
+			<a class="text-xl font-bold" href="/static/index.html">EMERGIAI</a>
+			<div class="space-x-2">
+				<a href="/static/index.html">Home</a>
+				<a href="/static/chat.html">Chat</a>
+				<a href="/static/nearby.html">Hospitals</a>
+				<a href="/static/firstaid.html">First Aid</a>
+				<a href="/static/about.html">About</a>
+				<a class="active" href="/static/contact.html">Contact</a>
+			</div>
+		</nav>
+	</header>
+
+	<main class="container py-6 grid gap-4">
+		<section class="card">
+			<h2 class="text-xl font-semibold mb-2">Emergency Contacts</h2>
+			<div class="flex gap-2 mb-2">
+				<input id="name" class="border rounded px-3 py-2" placeholder="Name" />
+				<input id="phone" class="border rounded px-3 py-2" placeholder="Phone or Email" />
+				<button id="add" class="btn btn-primary">Add</button>
+			</div>
+			<ul id="list" class="list-disc pl-6"></ul>
+			<button id="test" class="btn mt-3">Send Test Alert</button>
+		</section>
+	</main>
+
+	<script type="module">
+		import { $, on, getContacts, saveContacts } from '/static/assets/app.js';
+		function render() {
+			const items = getContacts();
+			const ul = $('#list'); ul.innerHTML = '';
+			items.forEach((c, i) => {
+				const li = document.createElement('li');
+				li.textContent = `${c.name} — ${c.contact}`;
+				const del = document.createElement('button'); del.textContent = 'Remove'; del.className = 'btn ml-2';
+				del.onclick = () => { items.splice(i,1); saveContacts(items); render(); };
+				li.appendChild(del); ul.appendChild(li);
+			});
+		}
+		on($('#add'), 'click', () => {
+			const items = getContacts();
+			items.push({ name: $('#name').value, contact: $('#phone').value });
+			saveContacts(items); $('#name').value=''; $('#phone').value=''; render();
+		});
+		on($('#test'), 'click', () => {
+			alert('Test alert sent to saved contacts (demo).');
+		});
+		render();
+	</script>
+</body>
+</html>

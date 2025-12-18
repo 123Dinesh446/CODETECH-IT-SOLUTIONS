@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>EMERGIAI Chat</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/static/assets/styles.css" />
+</head>
+<body class="theme-yellow">
+	<header class="bg-white shadow">
+		<nav class="container nav flex items-center justify-between">
+			<a class="text-xl font-bold" href="/static/index.html">EMERGIAI</a>
+			<div class="space-x-2">
+				<a href="/static/index.html">Home</a>
+				<a class="active" href="/static/chat.html">Chat</a>
+				<a href="/static/nearby.html">Hospitals</a>
+				<a href="/static/firstaid.html">First Aid</a>
+				<a href="/static/about.html">About</a>
+				<a href="/static/contact.html">Contact</a>
+			</div>
+		</nav>
+	</header>
+
+	<main class="container py-6">
+		<div class="card">
+			<div id="chat" class="space-y-3 max-h-[60vh] overflow-auto">
+				<div class="text-gray-600">Assistant: Ask a first-aid question or describe your emergency.</div>
+			</div>
+			<div class="mt-4 flex gap-2 flex-wrap">
+				<input id="msg" class="flex-1 border rounded px-3 py-2 min-w-[240px]" placeholder="Ask or describe..." />
+				<button id="voice" class="btn">🎤 Voice</button>
+				<button id="ask" class="btn">Ask (FAQ)</button>
+				<button id="send" class="btn btn-primary">Analyze (Triage)</button>
+			</div>
+		</div>
+	</main>
+
+	<script type="module">
+		import { $, on, sendAnalyze, speak, createRecognition, speechSupported, searchFaqApi } from '/static/assets/app.js';
+
+		function addMsg(text, who) {
+			const div = document.createElement('div');
+			div.textContent = `${who}: ${text}`;
+			$('#chat').appendChild(div);
+			$('#chat').scrollTop = $('#chat').scrollHeight;
+		}
+
+		async function handleAsk(text) {
+			if (!text) return;
+			addMsg(text, 'You (FAQ)');
+			$('#msg').value = '';
+			try {
+				const res = await searchFaqApi(text, 3);
+				const items = res.items || [];
+				if (items.length) {
+					const exact = items.find(it => it.question.toLowerCase().includes(text.toLowerCase()));
+					const best = exact || items[0];
+					addMsg(best.answer, 'Assistant (FAQ)');
+					try { speak(best.answer); } catch {}
+				} else {
+					addMsg('No related answer found.', 'Assistant (FAQ)');
+				}
+			} catch (e) {
+				addMsg('FAQ search failed. Please try again.', 'Assistant (FAQ)');
+			}
+		}
+
+		async function handleAnalyze(text) {
+			if (!text) return;
+			addMsg(text, 'You');
+			$('#msg').value = '';
+			try {
+				const res = await sendAnalyze(text);
+				const reply = (res.recommendation?.actions?.join('; ') || '');
+				addMsg(reply || 'Advice provided.', 'Assistant');
+				try { if (reply) speak(reply); } catch {}
+			} catch (e) {
+				addMsg('Sorry, request failed. Please try again.', 'Assistant');
+			}
+		}
+
+		on($('#ask'), 'click', () => handleAsk($('#msg').value));
+		on($('#send'), 'click', () => handleAnalyze($('#msg').value));
+		on($('#msg'), 'keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) handleAsk($('#msg').value); });
+
+		if (speechSupported()) {
+			const rec = createRecognition((t) => handleAsk(t));
+			on($('#voice'), 'click', () => rec.start());
+		} else {
+			$('#voice').disabled = true; $('#voice').textContent = '🎤 Unsupported';
+		}
+	</script>
+</body>
+</html>

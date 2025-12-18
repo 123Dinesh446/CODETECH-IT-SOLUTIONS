@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Emergency - EMERGIAI</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/static/assets/styles.css" />
+</head>
+<body id="body">
+	<header class="bg-white shadow">
+		<nav class="container nav flex items-center justify-between">
+			<a class="text-xl font-bold" href="/static/index.html">EMERGIAI</a>
+			<div class="space-x-2">
+				<a href="/static/index.html">Home</a>
+				<a href="/static/chat.html">Chat</a>
+				<a href="/static/nearby.html">Hospitals</a>
+				<a href="/static/firstaid.html">First Aid</a>
+				<a href="/static/about.html">About</a>
+				<a href="/static/contact.html">Contact</a>
+			</div>
+		</nav>
+	</header>
+
+	<main class="container py-6 grid gap-4" id="root"></main>
+
+	<script>
+		const $ = (s) => document.querySelector(s);
+		function section(title, content, theme){
+			return `<section class=\"card ${theme}\">\n<h1 class=\"text-2xl font-bold mb-2\">${title}</h1>\n<div class=\"text-gray-800 space-y-2\">${content}</div>\n</section>`;
+		}
+		function list(label, items){ return `<h2 class=\"text-lg font-semibold mt-2\">${label}</h2><ul class=\"list-disc pl-6\">${items.map(i=>`<li>${i}</li>`).join('')}</ul>`; }
+		function callBtn(label, tel){ return `<a class=\"btn btn-danger\" href=\"tel:${tel}\">📞 ${label}</a>`; }
+
+		const params = new URLSearchParams(location.search);
+		const type = (params.get('type')||'sos').toLowerCase();
+		const root = $('#root');
+		const body = $('#body');
+
+		const basicRules = [
+			"Stay calm and ensure your safety first.",
+			"Share exact location and landmarks with responders.",
+			"Do not hang up until the dispatcher tells you to.",
+			"Follow instructions step by step; put the phone on speaker if possible.",
+			"Don't put yourself at risk; wait for trained help when unsafe.",
+			"If possible, ask a bystander to guide responders to your location."
+		];
+
+		const blocks = {
+			medical: {
+				title: 'Medical Emergency', theme: 'theme-green', page: 'theme-green', tel: '108',
+				steps: [
+					'Check responsiveness and breathing; call emergency if unresponsive.',
+					'Begin CPR if not breathing and you are trained.',
+					'Control severe bleeding with direct pressure and elevate if possible.'
+				],
+				precautions: [
+					'Do not give food or drink to an unconscious person.',
+					'Keep the person warm and comfortable; monitor breathing.',
+					'Do not move them unless there is immediate danger.'
+				],
+				calls: [ callBtn('Call Ambulance (108)', '108') ]
+			},
+			fire: {
+				title: 'Fire Emergency', theme: 'theme-red', page: 'theme-red', tel: '101',
+				steps: [
+					'Evacuate immediately; crawl low under smoke; close doors behind you.',
+					'If clothes catch fire: Stop, Drop, and Roll.',
+					'Use a fire extinguisher only if safe (PASS: Pull, Aim, Squeeze, Sweep).'
+				],
+				precautions: [
+					'Do not use elevators.',
+					'Feel doors for heat before opening; use an alternate exit if hot.',
+					'Avoid breathing smoke; cover nose and mouth with cloth.'
+				],
+				calls: [ callBtn('Call Fire (101)', '101') ]
+			},
+			police: {
+				title: 'Accident / Police', theme: 'theme-blue', page: 'theme-blue', tel: '100',
+				steps: [
+					'Ensure scene safety; switch on hazard lights; set a warning triangle.',
+					'Do not move injured persons unless there is immediate danger.',
+					'Provide basic first aid and gather location and incident details.'
+				],
+				precautions: [
+					'Do not argue or chase other vehicles; prioritize safety.',
+					'Document vehicle details and witnesses if safe to do so.',
+					'Keep emergency lane clear for responders.'
+				],
+				calls: [ callBtn('Call Police (100)', '100') ]
+			},
+			sos: {
+				title: 'General SOS', theme: 'theme-yellow', page: 'theme-yellow', tel: '112',
+				steps: [
+					'Ensure your personal safety and move away from immediate danger.',
+					'Call your local emergency number and provide clear location details.',
+					'Follow dispatcher instructions and prepare to guide responders.'
+				],
+				precautions: [
+					'Stay reachable; keep your phone charged and nearby.',
+					'Keep exits clear and secure pets if present.',
+					'Avoid spreading unverified information; follow official guidance.'
+				],
+				calls: [ callBtn('Call Emergency (112)', '112') ]
+			}
+		};
+
+		const b = blocks[type] || blocks.sos;
+		body.className = b.page;
+		const content = [
+			list('Immediate steps', b.steps),
+			list('Precautions', b.precautions),
+			list('Basic rules', basicRules),
+			`<div class=\"mt-4 space-x-2\">${b.calls.join(' ')} <a class=\"btn\" href=\"/static/nearby.html\">Nearby Hospitals</a></div>`,
+			`<div class=\"mt-4\"><a class=\"btn btn-danger\" style=\"font-size:14px;padding:10px 16px;\" href=\"tel:${b.tel}\">📞 Call Now</a></div>`
+		].join('\n');
+		root.innerHTML = section(b.title, content, b.theme);
+	</script>
+</body>
+</html>
